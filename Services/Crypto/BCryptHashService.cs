@@ -2,7 +2,7 @@ using BCrypt.Net;
 
 namespace BackendServiceStarter.Services.Crypto
 {
-    public class BCryptHashService
+    public class BCryptHashService : IHashService
     {
         public string Hash(string data)
         {
