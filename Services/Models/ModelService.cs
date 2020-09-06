@@ -36,10 +36,16 @@ namespace BackendServiceStarter.Services.Models
             return _models.FirstOrDefaultAsync(model => model.Id == id && model.DeletedAt == null);
         }
 
-        public Task<List<TModel>> Find(Expression<Func<TModel, bool>> predicate, int page = 1, int limit = 0)
+        public Task<List<TModel>> Find(Expression<Func<TModel, bool>> predicate = null, int page = 1, int limit = 0)
         {
-            return _models
-                .Where(predicate)
+            var query = _models.AsQueryable();
+            
+            if (predicate != null)
+            {
+                query = query.Where(predicate);
+            }
+            
+            return query
                 .Where(model => model.DeletedAt == null)
                 .Skip((page - 1) * limit)
                 .Take(limit)
