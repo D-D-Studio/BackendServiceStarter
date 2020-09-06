@@ -2,6 +2,7 @@ using BackendServiceStarter.Databases;
 using BackendServiceStarter.Models.Options;
 using BackendServiceStarter.Services.Auth;
 using BackendServiceStarter.Services.Crypto;
+using BackendServiceStarter.Services.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -31,6 +32,7 @@ namespace BackendServiceStarter
             });
             
             ConfigureAuthServices(services);
+            ConfigureModelsServices(services);
 
             services.AddControllers().AddNewtonsoftJson();
         }
@@ -87,6 +89,11 @@ namespace BackendServiceStarter
             services.AddSingleton(jwtAuthOptions);
             services.AddScoped<IHashService, BCryptHashService>();
             services.AddScoped<IAuthService, AuthService>();
+        }
+
+        private void ConfigureModelsServices(IServiceCollection services)
+        {
+            services.AddScoped(typeof(ModelService<>));
         }
     }
 }

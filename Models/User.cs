@@ -2,10 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BackendServiceStarter.Models
 {
-    public class User
+    public class User : Model
     {
-        public int Id { get; set; }
-        
         [EmailAddress]
         [Required]
         public string Email { get; set; }
