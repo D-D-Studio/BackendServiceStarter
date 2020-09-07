@@ -2,7 +2,7 @@
 Starter for RESTful API service.
 
 ## Requirements
-* .NET Core (>= 3.0)
+* .NET Core (>= 3.1)
 * PostgreSQL (>= 12)
 
 ## Description
