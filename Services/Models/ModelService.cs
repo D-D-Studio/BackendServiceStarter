@@ -36,9 +36,9 @@ namespace BackendServiceStarter.Services.Models
             return _models.AsNoTracking().FirstOrDefaultAsync(model => model.Id == id && model.DeletedAt == null);
         }
 
-        public virtual Task<List<TModel>> Find(Expression<Func<TModel, bool>> predicate = null, int page = 1, int limit = 0)
+        public virtual Task<List<TModel>> Find(Expression<Func<TModel, bool>> predicate = null, int page = 1, int limit = 50)
         {
-            var query = _models.AsQueryable();
+            var query = _models.AsQueryable().AsNoTracking();
             
             if (predicate != null)
             {
@@ -46,7 +46,6 @@ namespace BackendServiceStarter.Services.Models
             }
             
             return query
-                .AsNoTracking()
                 .Where(model => model.DeletedAt == null)
                 .Skip((page - 1) * limit)
                 .Take(limit)
