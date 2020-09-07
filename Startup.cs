@@ -6,12 +6,13 @@ using BackendServiceStarter.Services.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace BackendServiceStarter
 {
@@ -34,7 +35,13 @@ namespace BackendServiceStarter
             ConfigureAuthServices(services);
             ConfigureModelsServices(services);
 
-            services.AddControllers().AddNewtonsoftJson();
+            services
+                .AddControllers()
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                });
         }
         
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -93,7 +100,7 @@ namespace BackendServiceStarter
 
         private void ConfigureModelsServices(IServiceCollection services)
         {
-            services.AddScoped(typeof(ModelService<>));
+            services.AddScoped<UserService>();
         }
     }
 }

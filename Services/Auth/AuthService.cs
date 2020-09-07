@@ -1,27 +1,25 @@
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using BackendServiceStarter.Databases;
 using BackendServiceStarter.Models.Options;
 using BackendServiceStarter.Services.Auth.Exceptions;
 using BackendServiceStarter.Services.Crypto;
-using Microsoft.EntityFrameworkCore;
+using BackendServiceStarter.Services.Models;
 using Microsoft.IdentityModel.Tokens;
 
 namespace BackendServiceStarter.Services.Auth
 {
     public class AuthService : IAuthService
     {
-        private readonly ApplicationContext _database;
+        private readonly UserService _userService;
         private readonly IHashService _hashService;
         private readonly JwtAuthOptions _jwtAuthOptions;
         
-        public AuthService(ApplicationContext context, IHashService hashService, JwtAuthOptions jwtAuthOptions)
+        public AuthService(UserService userService, IHashService hashService, JwtAuthOptions jwtAuthOptions)
         {
-            _database = context;
+            _userService = userService;
             _hashService = hashService;
             _jwtAuthOptions = jwtAuthOptions;
         }
@@ -49,7 +47,7 @@ namespace BackendServiceStarter.Services.Auth
 
         public async Task<ClaimsIdentity> GetIdentity(string email, string password)
         {
-            var user = await _database.Users.Where(u => u.Email == email).FirstOrDefaultAsync();
+            var user = await _userService.FindByEmail(email);
             
             if (user == null)
             {
@@ -65,7 +63,7 @@ namespace BackendServiceStarter.Services.Auth
             (
                 new List<Claim>
                 {
-                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email),
+                    new Claim(ClaimsIdentity.DefaultNameClaimType, user.Id.ToString()),
                     new Claim(ClaimsIdentity.DefaultRoleClaimType, user.Role.ToString())
                 },
                 "Token",

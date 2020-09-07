@@ -12,8 +12,8 @@ namespace BackendServiceStarter.Services.Models
 {
     public class ModelService<TModel> where TModel : Model
     {
-        private readonly ApplicationContext _db;
-        private readonly DbSet<TModel> _models;
+        protected readonly ApplicationContext _db;
+        protected readonly DbSet<TModel> _models;
 
         public ModelService(ApplicationContext context)
         {
@@ -21,7 +21,7 @@ namespace BackendServiceStarter.Services.Models
             _models = context.Set<TModel>();
         }
         
-        public async Task Create(TModel modelObject)
+        public virtual async Task Create(TModel modelObject)
         {
             modelObject.CreatedAt = DateTime.Now;
             modelObject.UpdatedAt = DateTime.Now;
@@ -31,12 +31,12 @@ namespace BackendServiceStarter.Services.Models
             await _db.SaveChangesAsync();
         }
         
-        public Task<TModel> FindByPk(int id, bool isDeleted = false)
+        public virtual Task<TModel> FindByPk(int id, bool isDeleted = false)
         {
-            return _models.FirstOrDefaultAsync(model => model.Id == id && model.DeletedAt == null);
+            return _models.AsNoTracking().FirstOrDefaultAsync(model => model.Id == id && model.DeletedAt == null);
         }
 
-        public Task<List<TModel>> Find(Expression<Func<TModel, bool>> predicate = null, int page = 1, int limit = 0)
+        public virtual Task<List<TModel>> Find(Expression<Func<TModel, bool>> predicate = null, int page = 1, int limit = 0)
         {
             var query = _models.AsQueryable();
             
@@ -46,13 +46,14 @@ namespace BackendServiceStarter.Services.Models
             }
             
             return query
+                .AsNoTracking()
                 .Where(model => model.DeletedAt == null)
                 .Skip((page - 1) * limit)
                 .Take(limit)
                 .ToListAsync();
         }
 
-        public async Task Update(TModel modelObject)
+        public virtual async Task Update(TModel modelObject)
         {
             modelObject.UpdatedAt = DateTime.Now;
             
@@ -60,7 +61,7 @@ namespace BackendServiceStarter.Services.Models
             await _db.SaveChangesAsync();
         }
 
-        public async Task Delete(TModel modelObject)
+        public virtual async Task Delete(TModel modelObject)
         {
             modelObject.UpdatedAt = DateTime.Now;
             modelObject.DeletedAt = DateTime.Now;
@@ -69,7 +70,7 @@ namespace BackendServiceStarter.Services.Models
             await _db.SaveChangesAsync();
         }
 
-        public async Task DeleteByPk(int id)
+        public virtual async Task DeleteByPk(int id)
         {
             var model = await _models.FirstOrDefaultAsync(m => m.Id == id);
 
