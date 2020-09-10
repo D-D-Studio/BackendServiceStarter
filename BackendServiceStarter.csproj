@@ -10,6 +10,8 @@
         <PackageLicenseUrl>https://github.com/D-D-Studio/BackendServiceStarter/blob/master/LICENSE</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/D-D-Studio/BackendServiceStarter</RepositoryUrl>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Description>Starter for RESTful API service (PSQL, repo, JWT and etc.)</Description>
     </PropertyGroup>
 
     <ItemGroup>
