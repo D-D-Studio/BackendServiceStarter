@@ -2,6 +2,14 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
+        <IsPackable>true</IsPackable>
+        <PackageId>D-D-Studio.BackendServiceStarter</PackageId>
+        <PackageVersion>0.0.1</PackageVersion>
+        <Title>BackendServiceStarter</Title>
+        <Authors>D&amp;D Studio</Authors>
+        <PackageLicenseUrl>https://github.com/D-D-Studio/BackendServiceStarter/blob/master/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/D-D-Studio/BackendServiceStarter</RepositoryUrl>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     </PropertyGroup>
 
     <ItemGroup>
