@@ -7,9 +7,12 @@
         <PackageVersion>0.0.1</PackageVersion>
         <Title>BackendServiceStarter</Title>
         <Authors>D&amp;D Studio</Authors>
-        <PackageLicenseUrl>https://github.com/D-D-Studio/BackendServiceStarter/blob/master/LICENSE</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/D-D-Studio/BackendServiceStarter</RepositoryUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Description>Starter for RESTful API service (PSQL, repo, JWT and etc.)</Description>
+        <Copyright>Copyright (c) D&amp;D Studio</Copyright>
     </PropertyGroup>
 
     <ItemGroup>
