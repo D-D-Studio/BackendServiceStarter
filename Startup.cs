@@ -2,6 +2,7 @@ using BackendServiceStarter.Databases;
 using BackendServiceStarter.Models.Options;
 using BackendServiceStarter.Services.Auth;
 using BackendServiceStarter.Services.Crypto;
+using BackendServiceStarter.Services.Logs;
 using BackendServiceStarter.Services.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -10,7 +11,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Driver;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -27,11 +30,7 @@ namespace BackendServiceStarter
         
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationContext>(options =>
-            {
-                options.UseNpgsql(_configuration.GetConnectionString("ApplicationConnection"));
-            });
-            
+            ConfigureDatabases(services);
             ConfigureAuthServices(services);
             ConfigureModelsServices(services);
 
@@ -44,8 +43,10 @@ namespace BackendServiceStarter
                 });
         }
         
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+            loggerFactory.UseMongoLogger(app.ApplicationServices.GetRequiredService<IMongoDatabase>());
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -63,6 +64,18 @@ namespace BackendServiceStarter
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+        }
+
+        private void ConfigureDatabases(IServiceCollection services)
+        {
+            var mongoClient = new MongoClient(_configuration.GetValue<string>("MongoOptions:Host"));
+            var mongoDatabase = mongoClient.GetDatabase(_configuration.GetValue<string>("MongoOptions:Database"));
+
+            services.AddSingleton(mongoDatabase);
+            services.AddDbContext<ApplicationContext>(options =>
+            {
+                options.UseNpgsql(_configuration.GetConnectionString("ApplicationConnection"));
             });
         }
 
