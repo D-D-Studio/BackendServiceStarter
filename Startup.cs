@@ -1,10 +1,6 @@
 using BackendServiceStarter.Configurations;
 using BackendServiceStarter.Databases;
-using BackendServiceStarter.Models.Options;
-using BackendServiceStarter.Services.Auth;
-using BackendServiceStarter.Services.Crypto;
 using BackendServiceStarter.Services.Logs;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -31,8 +26,15 @@ namespace BackendServiceStarter
         public void ConfigureServices(IServiceCollection services)
         {
             ConfigureDatabases(services);
-            ConfigureAuthServices(services);
 
+            services.AddJwtAuth(options =>
+            {
+                options.Issuer = _configuration.GetValue<string>("JwtAuthOptions:Issuer");
+                options.Audience = _configuration.GetValue<string>("JwtAuthOptions:Audience");
+                options.Key = _configuration.GetValue<string>("JwtAuthOptions:Key");
+                options.Lifetime = _configuration.GetValue<uint>("JwtAuthOptions:Lifetime");
+            });
+            
             services.AddModelsServices();
             services.AddScheduledJobs();
             
@@ -79,38 +81,6 @@ namespace BackendServiceStarter
             {
                 options.UseNpgsql(_configuration.GetConnectionString("ApplicationConnection"));
             });
-        }
-
-        private void ConfigureAuthServices(IServiceCollection services)
-        {
-            var jwtAuthOptions = new JwtAuthOptions()
-            {
-                Issuer = _configuration.GetValue<string>("JwtAuthOptions:Issuer"),
-                Audience = _configuration.GetValue<string>("JwtAuthOptions:Audience"),
-                Key = _configuration.GetValue<string>("JwtAuthOptions:Key"),
-                Lifetime = _configuration.GetValue<uint>("JwtAuthOptions:Lifetime")
-            };
-            
-            services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidIssuer = jwtAuthOptions.Issuer,
-                        ValidAudience = jwtAuthOptions.Audience,
-                        IssuerSigningKey = jwtAuthOptions.GetSymmetricSecurityKey(),
-
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidateLifetime = true
-                    };
-                });
-
-            services.AddSingleton(jwtAuthOptions);
-            services.AddScoped<IHashService, BCryptHashService>();
-            services.AddScoped<IAuthService, AuthService>();
         }
     }
 }
