@@ -15,6 +15,8 @@ namespace BackendServiceStarter.Services.Logs
 
         public ILogger CreateLogger(string categoryName)
         {
+            // TODO: Check collection existing
+            
             return new MongoLogger(_mongoDatabase.GetCollection<Log>("Logs"), categoryName);
         }
         
