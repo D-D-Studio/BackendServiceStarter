@@ -25,6 +25,7 @@
       <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.7.1" />
       <PackageReference Include="MongoDB.Driver" Version="2.11.2" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.4" />
+      <PackageReference Include="Quartz" Version="3.1.0" />
     </ItemGroup>
 
     <ItemGroup>

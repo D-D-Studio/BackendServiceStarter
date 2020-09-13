@@ -4,6 +4,8 @@ using BackendServiceStarter.Services.Auth;
 using BackendServiceStarter.Services.Crypto;
 using BackendServiceStarter.Services.Logs;
 using BackendServiceStarter.Services.Models;
+using BackendServiceStarter.Services.Workers;
+using BackendServiceStarter.Services.Workers.Jobs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -16,6 +18,9 @@ using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Quartz;
+using Quartz.Impl;
+using Quartz.Spi;
 
 namespace BackendServiceStarter
 {
@@ -33,6 +38,7 @@ namespace BackendServiceStarter
             ConfigureDatabases(services);
             ConfigureAuthServices(services);
             ConfigureModelsServices(services);
+            ConfigureJobs(services);
 
             services
                 .AddControllers()
@@ -114,6 +120,21 @@ namespace BackendServiceStarter
         private void ConfigureModelsServices(IServiceCollection services)
         {
             services.AddScoped<UserService>();
+        }
+
+        private void ConfigureJobs(IServiceCollection services)
+        {
+            services.AddSingleton<IJobFactory, JobFactory>();
+            services.AddSingleton<ISchedulerFactory, StdSchedulerFactory>();
+
+            services.AddSingleton<ClearLogsJob>();
+            services.AddSingleton(new JobSchedule
+            (
+                jobType: typeof(ClearLogsJob),
+                crontabExpression: "*/5 * * * * ?"
+            ));
+
+            services.AddHostedService<JobsHostedService>();
         }
     }
 }
