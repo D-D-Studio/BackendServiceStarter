@@ -33,8 +33,8 @@ namespace BackendServiceStarter
         {
             ConfigureDatabases(services);
             ConfigureAuthServices(services);
-            ConfigureModelsServices(services);
-            
+
+            services.AddModelsServices();
             services.AddScheduledJobs();
             
             services
@@ -112,11 +112,6 @@ namespace BackendServiceStarter
             services.AddSingleton(jwtAuthOptions);
             services.AddScoped<IHashService, BCryptHashService>();
             services.AddScoped<IAuthService, AuthService>();
-        }
-
-        private void ConfigureModelsServices(IServiceCollection services)
-        {
-            services.AddScoped<UserService>();
         }
     }
 }
