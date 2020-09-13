@@ -1,12 +1,13 @@
+using BackendServiceStarter.Services.Workers;
 using BackendServiceStarter.Services.Workers.Jobs;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using Quartz.Impl;
 using Quartz.Spi;
 
-namespace BackendServiceStarter.Services.Workers
+namespace BackendServiceStarter.Configurations
 {
-    public static class JobsServiceExtension
+    public static class ScheduledJobsExtension
     {
         public static IServiceCollection AddScheduledJobs(this IServiceCollection services)
         {

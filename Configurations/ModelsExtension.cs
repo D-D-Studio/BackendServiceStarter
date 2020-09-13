@@ -1,8 +1,9 @@
+using BackendServiceStarter.Services.Models;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BackendServiceStarter.Services.Models
+namespace BackendServiceStarter.Configurations
 {
-    public static class ModelsServiceExtension
+    public static class ModelsExtension
     {
         public static IServiceCollection AddModelsServices(this IServiceCollection services)
         {

@@ -1,10 +1,9 @@
+using BackendServiceStarter.Configurations;
 using BackendServiceStarter.Databases;
 using BackendServiceStarter.Models.Options;
 using BackendServiceStarter.Services.Auth;
 using BackendServiceStarter.Services.Crypto;
 using BackendServiceStarter.Services.Logs;
-using BackendServiceStarter.Services.Models;
-using BackendServiceStarter.Services.Workers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
