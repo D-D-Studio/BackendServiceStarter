@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Serilog;
@@ -9,8 +8,6 @@ namespace BackendServiceStarter
     {
         public static void Main(string[] args)
         {
-            
-            Serilog.Debugging.SelfLog.Enable(msg => Console.WriteLine(msg));
             CreateHostBuilder(args).Build().Run();
         }
 
