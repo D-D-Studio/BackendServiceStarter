@@ -1,12 +1,9 @@
 using BackendServiceStarter.Configurations;
-using BackendServiceStarter.Databases;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using MongoDB.Driver;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Serilog;
@@ -24,7 +21,7 @@ namespace BackendServiceStarter
         
         public void ConfigureServices(IServiceCollection services)
         {
-            ConfigureDatabases(services);
+            services.AddDatabasesConnections(_configuration);
 
             services.AddJwtAuth(options =>
             {
@@ -67,18 +64,6 @@ namespace BackendServiceStarter
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-            });
-        }
-
-        private void ConfigureDatabases(IServiceCollection services)
-        {
-            var mongoClient = new MongoClient(_configuration.GetValue<string>("MongoOptions:Host"));
-            var mongoDatabase = mongoClient.GetDatabase(_configuration.GetValue<string>("MongoOptions:Database"));
-
-            services.AddSingleton(mongoDatabase);
-            services.AddDbContext<ApplicationContext>(options =>
-            {
-                options.UseNpgsql(_configuration.GetConnectionString("ApplicationConnection"));
             });
         }
     }
