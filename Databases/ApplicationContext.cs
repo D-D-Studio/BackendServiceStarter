@@ -1,7 +1,5 @@
-using System;
 using BackendServiceStarter.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace BackendServiceStarter.Databases
 {

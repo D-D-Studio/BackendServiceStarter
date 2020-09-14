@@ -7,7 +7,6 @@ using BackendServiceStarter.Models.Options;
 using BackendServiceStarter.Services.Auth.Exceptions;
 using BackendServiceStarter.Services.Crypto;
 using BackendServiceStarter.Services.Models;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace BackendServiceStarter.Services.Auth

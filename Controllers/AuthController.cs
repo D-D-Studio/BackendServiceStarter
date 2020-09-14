@@ -4,7 +4,6 @@ using BackendServiceStarter.Models.Requests.Auth;
 using BackendServiceStarter.Services.Auth;
 using BackendServiceStarter.Services.Auth.Exceptions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace BackendServiceStarter.Controllers
 {
