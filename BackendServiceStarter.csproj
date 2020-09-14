@@ -26,6 +26,10 @@
       <PackageReference Include="MongoDB.Driver" Version="2.11.2" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="3.1.4" />
       <PackageReference Include="Quartz" Version="3.1.0" />
+      <PackageReference Include="Serilog" Version="2.10.0" />
+      <PackageReference Include="Serilog.AspNetCore" Version="3.1.0" />
+      <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
+      <PackageReference Include="Serilog.Sinks.MongoDB" Version="3.1.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -33,5 +37,9 @@
       <Compile Remove="Tests\**" />
       <EmbeddedResource Remove="Tests\**" />
       <None Remove="Tests\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Services\Workers\Jobs" />
     </ItemGroup>
 </Project>

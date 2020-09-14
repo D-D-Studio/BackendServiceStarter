@@ -7,6 +7,7 @@ using BackendServiceStarter.Models.Options;
 using BackendServiceStarter.Services.Auth.Exceptions;
 using BackendServiceStarter.Services.Crypto;
 using BackendServiceStarter.Services.Models;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace BackendServiceStarter.Services.Auth
@@ -16,16 +17,20 @@ namespace BackendServiceStarter.Services.Auth
         private readonly UserService _userService;
         private readonly IHashService _hashService;
         private readonly JwtAuthOptions _jwtAuthOptions;
+        private readonly ILogger<JwtAuthService> _logger;
         
-        public JwtAuthService(UserService userService, IHashService hashService, JwtAuthOptions jwtAuthOptions)
+        public JwtAuthService(UserService userService, IHashService hashService, JwtAuthOptions jwtAuthOptions, ILogger<JwtAuthService> logger)
         {
             _userService = userService;
             _hashService = hashService;
             _jwtAuthOptions = jwtAuthOptions;
+            _logger = logger;
         }
         
         public string GenerateToken(ClaimsIdentity identity)
         {
+            _logger.LogInformation("Create JWT-token");
+            
             var jwt = new JwtSecurityToken
             (
                 issuer: _jwtAuthOptions.Issuer,

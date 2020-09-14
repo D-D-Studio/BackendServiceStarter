@@ -1,16 +1,15 @@
 using BackendServiceStarter.Configurations;
 using BackendServiceStarter.Databases;
-using BackendServiceStarter.Services.Logs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Serilog;
 
 namespace BackendServiceStarter
 {
@@ -47,9 +46,9 @@ namespace BackendServiceStarter
                 });
         }
         
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            loggerFactory.UseMongoLogger(app.ApplicationServices.GetRequiredService<IMongoDatabase>());
+            app.UseSerilogRequestLogging();
             
             if (env.IsDevelopment())
             {

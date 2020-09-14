@@ -1,5 +1,4 @@
 using BackendServiceStarter.Services.Workers;
-using BackendServiceStarter.Services.Workers.Jobs;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using Quartz.Impl;
@@ -23,12 +22,14 @@ namespace BackendServiceStarter.Configurations
 
         private static void AddJobs(IServiceCollection services)
         {
-            services.AddSingleton<ClearLogsJob>();
-            services.AddSingleton(new JobSchedule
-            (
-                jobType: typeof(ClearLogsJob),
-                crontabExpression: "*/5 * * * * ?"
-            ));
+            // Example of worker:
+            // 
+            // services.AddSingleton<ClearLogsJob>();
+            // services.AddSingleton(new JobSchedule
+            // (
+            //     jobType: typeof(ClearLogsJob),
+            //     crontabExpression: "*/5 * * * * ?"
+            // ));
         }
     }
 }
