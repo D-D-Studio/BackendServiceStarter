@@ -17,20 +17,16 @@ namespace BackendServiceStarter.Services.Auth
         private readonly UserService _userService;
         private readonly IHashService _hashService;
         private readonly JwtAuthOptions _jwtAuthOptions;
-        private readonly ILogger<JwtAuthService> _logger;
         
-        public JwtAuthService(UserService userService, IHashService hashService, JwtAuthOptions jwtAuthOptions, ILogger<JwtAuthService> logger)
+        public JwtAuthService(UserService userService, IHashService hashService, JwtAuthOptions jwtAuthOptions)
         {
             _userService = userService;
             _hashService = hashService;
             _jwtAuthOptions = jwtAuthOptions;
-            _logger = logger;
         }
         
         public string GenerateToken(ClaimsIdentity identity)
         {
-            _logger.LogInformation("Create JWT-token");
-            
             var jwt = new JwtSecurityToken
             (
                 issuer: _jwtAuthOptions.Issuer,

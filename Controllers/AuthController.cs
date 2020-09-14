@@ -13,20 +13,16 @@ namespace BackendServiceStarter.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
-        private readonly ILogger<AuthController> _logger;
-        
-        public AuthController(IAuthService authService, ILogger<AuthController> logger)
+
+        public AuthController(IAuthService authService)
         {
             _authService = authService;
-            _logger = logger;
         }
         
         [HttpPost]
         public async Task<ActionResult<object>> Auth([FromBody] AuthRequest request)
         {
             ClaimsIdentity identity;
-            
-            _logger.LogInformation($"User authentication: {request.Email}");
             
             try
             {
