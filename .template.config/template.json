@@ -1,0 +1,12 @@
+{
+  "identity": "D-D-Studio.BackendServiceStarter",
+  "author": "D&D Studio",
+  "classifications": [ "Web", "WebAPI" ],
+  "name": "BackendServiceStarter",
+  "shortname": "bss-webapi",
+  "sourceName": "BackendServiceStarter",
+  "preferNameDirectory":"true",
+  "tags": {
+    "language": "c#"
+  }
+}

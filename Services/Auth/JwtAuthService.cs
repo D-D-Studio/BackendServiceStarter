@@ -11,13 +11,13 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BackendServiceStarter.Services.Auth
 {
-    public class AuthService : IAuthService
+    public class JwtAuthService : IAuthService
     {
         private readonly UserService _userService;
         private readonly IHashService _hashService;
         private readonly JwtAuthOptions _jwtAuthOptions;
         
-        public AuthService(UserService userService, IHashService hashService, JwtAuthOptions jwtAuthOptions)
+        public JwtAuthService(UserService userService, IHashService hashService, JwtAuthOptions jwtAuthOptions)
         {
             _userService = userService;
             _hashService = hashService;

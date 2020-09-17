@@ -6,3 +6,7 @@ riderModule.iml
 appsettings.Development.json
 .idea
 .vs
+.DS_Store
+*/bin
+*/obj
+*/.DS_Store
