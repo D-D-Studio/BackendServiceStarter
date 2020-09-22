@@ -24,7 +24,7 @@ namespace BackendServiceStarter.Services.Models
 
         public Task<User> FindByEmail(string email)
         {
-            return _models.AsNoTracking().FirstOrDefaultAsync(user => user.Email == email);
+            return Models.AsNoTracking().FirstOrDefaultAsync(user => user.Email == email);
         }
     }
 }
