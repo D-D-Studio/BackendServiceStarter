@@ -45,18 +45,19 @@ namespace BackendServiceStarter.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<User>> Create([FromBody] CreateUserRequest request)
         {
-            if (request.Password != request.ConfirmPassword)
+            if (request.IsPasswordNotValid())
             {
                 return BadRequest();
             }
 
-            // TODO: Make policy
-            if ((!HttpContext.User.Identity.IsAuthenticated || !HttpContext.User.IsInRole("Administrator")) &&
-                request.Role != UserRole.Default)
+            var isNotAdministrator = !HttpContext.User.Identity.IsAuthenticated ||
+                                     !HttpContext.User.IsInRole("Administrator");
+
+            if (isNotAdministrator && request.IsRoleNotDefault())
             {
                 return Forbid();
             }
-            
+
             var user = new User
             {
                 Email = request.Email,
@@ -68,7 +69,7 @@ namespace BackendServiceStarter.Controllers
 
             return await _userService.FindByEmail(user.Email);
         }
-        
+
         [HttpPut("{id:int}")]
         public async Task<ActionResult<User>> Update([FromRoute] int id, [FromBody] UpdateUserRequest request)
         {
@@ -78,21 +79,23 @@ namespace BackendServiceStarter.Controllers
             {
                 return NotFound();
             }
-            
-            // TODO: Make policy
-            if (HttpContext.User.Identity.Name != user.Id.ToString() && !HttpContext.User.IsInRole("Administrator"))
+
+            var isNotCurrentUser = HttpContext.User.Identity.Name != user.Id.ToString();
+            var isNotAdministrator = !HttpContext.User.IsInRole("Administrator");
+
+            if (isNotCurrentUser && isNotAdministrator)
             {
                 return Forbid();
             }
 
-            if (request.Email != null)
+            if (request.IsEmailExist())
             {
                 user.Email = request.Email;
             }
 
-            if (request.Password != null && request.ConfirmPassword != null)
+            if (request.IsPasswordExist())
             {
-                if (request.Password != request.ConfirmPassword)
+                if (request.IsPasswordNotValid())
                 {
                     return BadRequest();
                 }
@@ -102,7 +105,7 @@ namespace BackendServiceStarter.Controllers
 
             if (request.Role.HasValue)
             {
-                if (!HttpContext.User.IsInRole("Administrator"))
+                if (isNotAdministrator)
                 {
                     return Forbid();
                 }
@@ -118,12 +121,14 @@ namespace BackendServiceStarter.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Destroy(int id)
         {
-            // TODO: Make policy
-            if (HttpContext.User.Identity.Name != id.ToString() && !HttpContext.User.IsInRole("Administrator"))
+            var isNotCurrentUser = HttpContext.User.Identity.Name != id.ToString();
+            var isNotAdministrator = !HttpContext.User.IsInRole("Administrator");
+
+            if (isNotCurrentUser && isNotAdministrator)
             {
                 return Forbid();
             }
-            
+
             try
             {
                 await _userService.DeleteByPk(id);

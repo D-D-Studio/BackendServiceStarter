@@ -15,5 +15,15 @@ namespace BackendServiceStarter.Models.Requests.User
         public string ConfirmPassword { get; set; }
         
         public UserRole Role { get; set; }
+        
+        public bool IsPasswordNotValid()
+        {
+            return Password != ConfirmPassword;
+        }
+
+        public bool IsRoleNotDefault()
+        {
+            return Role != UserRole.Default;
+        }
     }
 }
