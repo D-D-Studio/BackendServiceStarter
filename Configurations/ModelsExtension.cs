@@ -7,7 +7,7 @@ namespace BackendServiceStarter.Configurations
     {
         public static IServiceCollection AddModelsServices(this IServiceCollection services)
         {
-            services.AddScoped<UserService>();
+            services.AddScoped<UserRepository>();
 
             return services;
         }

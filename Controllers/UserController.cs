@@ -14,24 +14,24 @@ namespace BackendServiceStarter.Controllers
     [Authorize]
     public class UserController : ControllerBase
     {
-        private readonly UserService _userService;
+        private readonly UserRepository _userRepository;
 
-        public UserController(UserService userModelService)
+        public UserController(UserRepository userRepository)
         {
-            _userService = userModelService;
+            _userRepository = userRepository;
         }
 
         [HttpGet]
         [Authorize(Roles = "Administrator,Moderator")]
         public Task<List<User>> Index()
         {
-            return _userService.Find();
+            return _userRepository.Find();
         }
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<User>> Show(int id)
         {
-            var user = await _userService.FindByPk(id);
+            var user = await _userRepository.FindByPk(id);
 
             if (user == null)
             {
@@ -65,15 +65,15 @@ namespace BackendServiceStarter.Controllers
                 Role = request.Role
             };
 
-            await _userService.Create(user);
+            await _userRepository.Create(user);
 
-            return await _userService.FindByEmail(user.Email);
+            return await _userRepository.FindByEmail(user.Email);
         }
 
         [HttpPut("{id:int}")]
         public async Task<ActionResult<User>> Update([FromRoute] int id, [FromBody] UpdateUserRequest request)
         {
-            var user = await _userService.FindByPk(id);
+            var user = await _userRepository.FindByPk(id);
 
             if (user == null)
             {
@@ -113,7 +113,7 @@ namespace BackendServiceStarter.Controllers
                 user.Role = request.Role.Value;
             }
 
-            await _userService.Update(user);
+            await _userRepository.Update(user);
 
             return user;
         }
@@ -131,7 +131,7 @@ namespace BackendServiceStarter.Controllers
 
             try
             {
-                await _userService.DeleteByPk(id);
+                await _userRepository.DeleteByPk(id);
             }
             catch (EntityNotFoundException)
             {

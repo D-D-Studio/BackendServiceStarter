@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BackendServiceStarter.Services.Models
 {
-    public class UserService : ModelService<User>
+    public class UserRepository : Repository<User>
     {
         private readonly IHashService _hashService;
         
-        public UserService(ApplicationContext context, IHashService hashService) : base(context)
+        public UserRepository(ApplicationContext context, IHashService hashService) : base(context)
         {
             _hashService = hashService;
         }

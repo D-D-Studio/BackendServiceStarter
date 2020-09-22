@@ -10,12 +10,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BackendServiceStarter.Services.Models
 {
-    public class ModelService<TModel> where TModel : Model
+    public class Repository<TModel> where TModel : Model
     {
         protected readonly ApplicationContext _db;
         protected readonly DbSet<TModel> _models;
 
-        public ModelService(ApplicationContext context)
+        public Repository(ApplicationContext context)
         {
             _db = context;
             _models = context.Set<TModel>();
