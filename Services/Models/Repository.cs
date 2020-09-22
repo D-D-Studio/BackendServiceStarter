@@ -20,7 +20,7 @@ namespace BackendServiceStarter.Services.Models
             Db = context;
             Models = context.Set<TModel>();
         }
-        
+
         public virtual async Task Create(TModel modelObject)
         {
             modelObject.CreatedAt = DateTime.Now;
@@ -30,21 +30,29 @@ namespace BackendServiceStarter.Services.Models
             await Models.AddAsync(modelObject);
             await Db.SaveChangesAsync();
         }
-        
+
         public virtual Task<TModel> FindByPk(int id, bool isDeleted = false)
         {
-            return Models.AsNoTracking().FirstOrDefaultAsync(model => model.Id == id && model.DeletedAt == null);
+            var query = Models
+                .AsNoTracking()
+                .Where(model => model.Id == id);
+
+            query = isDeleted
+                ? query.Where(model => model.DeletedAt != null)
+                : query.Where(model => model.DeletedAt == null);
+
+            return query.FirstOrDefaultAsync();
         }
 
         public virtual Task<List<TModel>> Find(Expression<Func<TModel, bool>> predicate = null, int page = 1, int limit = 50)
         {
             var query = Models.AsQueryable().AsNoTracking();
-            
+
             if (predicate != null)
             {
                 query = query.Where(predicate);
             }
-            
+
             return query
                 .Where(model => model.DeletedAt == null)
                 .Skip((page - 1) * limit)
@@ -55,7 +63,7 @@ namespace BackendServiceStarter.Services.Models
         public virtual async Task Update(TModel modelObject)
         {
             modelObject.UpdatedAt = DateTime.Now;
-            
+
             Models.Update(modelObject);
             await Db.SaveChangesAsync();
         }
@@ -77,7 +85,7 @@ namespace BackendServiceStarter.Services.Models
             {
                 throw new EntityNotFoundException();
             }
-            
+
             model.UpdatedAt = DateTime.Now;
             model.DeletedAt = DateTime.Now;
 
