@@ -1,18 +1,12 @@
-using BackendServiceStarter.Databases;
-using BackendServiceStarter.Models.Options;
-using BackendServiceStarter.Services.Auth;
-using BackendServiceStarter.Services.Crypto;
-using BackendServiceStarter.Services.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using BackendServiceStarter.Configurations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Serilog;
 
 namespace BackendServiceStarter
 {
@@ -27,14 +21,19 @@ namespace BackendServiceStarter
         
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationContext>(options =>
+            services.AddDatabasesConnections(_configuration);
+
+            services.AddJwtAuth(options =>
             {
-                options.UseNpgsql(_configuration.GetConnectionString("ApplicationConnection"));
+                options.Issuer = _configuration.GetValue<string>("JwtAuthOptions:Issuer");
+                options.Audience = _configuration.GetValue<string>("JwtAuthOptions:Audience");
+                options.Key = _configuration.GetValue<string>("JwtAuthOptions:Key");
+                options.Lifetime = _configuration.GetValue<uint>("JwtAuthOptions:Lifetime");
             });
             
-            ConfigureAuthServices(services);
-            ConfigureModelsServices(services);
-
+            services.AddModelsServices();
+            services.AddScheduledJobs();
+            
             services
                 .AddControllers()
                 .AddNewtonsoftJson(options =>
@@ -46,6 +45,8 @@ namespace BackendServiceStarter
         
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseSerilogRequestLogging();
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -64,43 +65,6 @@ namespace BackendServiceStarter
             {
                 endpoints.MapControllers();
             });
-        }
-
-        private void ConfigureAuthServices(IServiceCollection services)
-        {
-            var jwtAuthOptions = new JwtAuthOptions()
-            {
-                Issuer = _configuration.GetValue<string>("JwtAuthOptions:Issuer"),
-                Audience = _configuration.GetValue<string>("JwtAuthOptions:Audience"),
-                Key = _configuration.GetValue<string>("JwtAuthOptions:Key"),
-                Lifetime = _configuration.GetValue<uint>("JwtAuthOptions:Lifetime")
-            };
-            
-            services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidIssuer = jwtAuthOptions.Issuer,
-                        ValidAudience = jwtAuthOptions.Audience,
-                        IssuerSigningKey = jwtAuthOptions.GetSymmetricSecurityKey(),
-
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidateLifetime = true
-                    };
-                });
-
-            services.AddSingleton(jwtAuthOptions);
-            services.AddScoped<IHashService, BCryptHashService>();
-            services.AddScoped<IAuthService, AuthService>();
-        }
-
-        private void ConfigureModelsServices(IServiceCollection services)
-        {
-            services.AddScoped<UserService>();
         }
     }
 }
