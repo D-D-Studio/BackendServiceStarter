@@ -17,13 +17,13 @@ let getProjectName: string =
     let onlyProjectName =
         splitedPath.[splitedPath.Length - 1].Replace(".csproj", "")
 
-    onlyProjectName.Replace(".", "")
+    onlyProjectName
 
 for file in dockerFiles do
     let mutable project = getProjectName
     let mutable template = replacement
     if file.Contains("yml") || file.Contains("dcproj") then
-        project <- project.ToLower()
+        project <- project.ToLower().Replace(".", "")
         template <- template.ToLower()
     let linesArray = ResizeArray<string>()
     for line in File.ReadAllLines(file) do
