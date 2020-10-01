@@ -34,18 +34,23 @@ Change `appsettings.json` file with your settings:
 
 `JwtAuthOptions:Lifetime` - lifetime for JWT in minutes.
 
-## Models usage
-For default model repository add to service container ModelService<>:
+## Repository usage
+For default model repository add to service container Repository<>:
 ```csharp
-private void ConfigureModelsServices(IServiceCollection services)
+public static class ModelsExtension
 {
-    services.AddScoped(typeof(ModelService<>));
-    services.AddScoped<UserService>();
+    public static IServiceCollection AddModelsServices(this IServiceCollection services)
+    {
+        services.AddScoped(typeof(Repository<>));
+        services.AddScoped<UserRepository>();
+
+        return services;
+    }
 }
 ```
 If you need to override default methods or add your methods then create derrived class:
 ```csharp
-class BookService : ModelService<Book>
+class BookRepository : Repository<Book>
 {
     public override Task Update(Book modelObject)
     {
