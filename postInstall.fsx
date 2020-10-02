@@ -6,18 +6,15 @@ let dockerFiles =
        "docker-compose.yml"
        "docker-compose.override.yml" |]
 
-let mutable replacement = "BackendServiceStarter"
+let replacement = "BackendServiceStarter"
 
 let getProjectName: string =
     let getDirectoryPath = Directory.GetCurrentDirectory()
 
-    let splitedPath =
-        Directory.GetFiles(getDirectoryPath, "*csproj").[0].Split('\\', '/')
+    let splitedPath = Directory.GetFiles(getDirectoryPath, "*csproj").[0].Split('\\', '/')
 
-    let onlyProjectName =
-        splitedPath.[splitedPath.Length - 1].Replace(".csproj", "")
-
-    onlyProjectName
+    splitedPath.[splitedPath.Length - 1].Replace(".csproj", "")
+    
 
 for file in dockerFiles do
     let mutable project = getProjectName
