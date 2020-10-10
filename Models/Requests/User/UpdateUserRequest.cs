@@ -12,5 +12,20 @@ namespace BackendServiceStarter.Models.Requests.User
         public string ConfirmPassword { get; set; }
         
         public UserRole? Role { get; set; }
+
+        public bool IsEmailExist()
+        {
+            return Email != null;
+        }
+
+        public bool IsPasswordExist()
+        {
+            return Password != null && ConfirmPassword != null;
+        }
+
+        public bool IsPasswordNotValid()
+        {
+            return Password != ConfirmPassword;
+        }
     }
 }

@@ -14,24 +14,24 @@ namespace BackendServiceStarter.Controllers
     [Authorize]
     public class UserController : ControllerBase
     {
-        private readonly UserService _userService;
+        private readonly UserRepository _userRepository;
 
-        public UserController(UserService userModelService)
+        public UserController(UserRepository userRepository)
         {
-            _userService = userModelService;
+            _userRepository = userRepository;
         }
 
         [HttpGet]
         [Authorize(Roles = "Administrator,Moderator")]
         public Task<List<User>> Index()
         {
-            return _userService.Find();
+            return _userRepository.Find();
         }
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<User>> Show(int id)
         {
-            var user = await _userService.FindByPk(id);
+            var user = await _userRepository.FindByPk(id);
 
             if (user == null)
             {
@@ -45,17 +45,18 @@ namespace BackendServiceStarter.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<User>> Create([FromBody] CreateUserRequest request)
         {
-            if (request.Password != request.ConfirmPassword)
+            if (request.IsPasswordNotValid())
             {
                 return BadRequest();
             }
-            
-            if ((!HttpContext.User.Identity.IsAuthenticated || !HttpContext.User.IsInRole("Administrator")) &&
-                request.Role != UserRole.Default)
+            var isNotAdministrator = !HttpContext.User.Identity.IsAuthenticated ||
+                                     !HttpContext.User.IsInRole("Administrator");
+
+            if (isNotAdministrator && request.IsRoleNotDefault())
             {
                 return Forbid();
             }
-            
+
             var user = new User
             {
                 Email = request.Email,
@@ -63,34 +64,37 @@ namespace BackendServiceStarter.Controllers
                 Role = request.Role
             };
 
-            await _userService.Create(user);
+            await _userRepository.Create(user);
 
-            return await _userService.FindByEmail(user.Email);
+            return await _userRepository.FindByEmail(user.Email);
         }
-        
+
         [HttpPut("{id:int}")]
         public async Task<ActionResult<User>> Update([FromRoute] int id, [FromBody] UpdateUserRequest request)
         {
-            var user = await _userService.FindByPk(id);
+            var user = await _userRepository.FindByPk(id);
 
             if (user == null)
             {
                 return NotFound();
             }
             
-            if (HttpContext.User.Identity.Name != user.Id.ToString() && !HttpContext.User.IsInRole("Administrator"))
+            var isNotCurrentUser = HttpContext.User.Identity.Name != user.Id.ToString();
+            var isNotAdministrator = !HttpContext.User.IsInRole("Administrator");
+
+            if (isNotCurrentUser && isNotAdministrator)
             {
                 return Forbid();
             }
 
-            if (request.Email != null)
+            if (request.IsEmailExist())
             {
                 user.Email = request.Email;
             }
 
-            if (request.Password != null && request.ConfirmPassword != null)
+            if (request.IsPasswordExist())
             {
-                if (request.Password != request.ConfirmPassword)
+                if (request.IsPasswordNotValid())
                 {
                     return BadRequest();
                 }
@@ -100,7 +104,7 @@ namespace BackendServiceStarter.Controllers
 
             if (request.Role.HasValue)
             {
-                if (!HttpContext.User.IsInRole("Administrator"))
+                if (isNotAdministrator)
                 {
                     return Forbid();
                 }
@@ -108,7 +112,7 @@ namespace BackendServiceStarter.Controllers
                 user.Role = request.Role.Value;
             }
 
-            await _userService.Update(user);
+            await _userRepository.Update(user);
 
             return user;
         }
@@ -116,14 +120,17 @@ namespace BackendServiceStarter.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Destroy(int id)
         {
-            if (HttpContext.User.Identity.Name != id.ToString() && !HttpContext.User.IsInRole("Administrator"))
+            var isNotCurrentUser = HttpContext.User.Identity.Name != id.ToString();
+            var isNotAdministrator = !HttpContext.User.IsInRole("Administrator");
+
+            if (isNotCurrentUser && isNotAdministrator)
             {
                 return Forbid();
             }
-            
+
             try
             {
-                await _userService.DeleteByPk(id);
+                await _userRepository.DeleteByPk(id);
             }
             catch (EntityNotFoundException)
             {

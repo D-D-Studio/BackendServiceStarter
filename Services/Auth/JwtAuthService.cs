@@ -13,13 +13,13 @@ namespace BackendServiceStarter.Services.Auth
 {
     public class JwtAuthService : IAuthService
     {
-        private readonly UserService _userService;
+        private readonly UserRepository _userRepository;
         private readonly IHashService _hashService;
         private readonly JwtAuthOptions _jwtAuthOptions;
         
-        public JwtAuthService(UserService userService, IHashService hashService, JwtAuthOptions jwtAuthOptions)
+        public JwtAuthService(UserRepository userRepository, IHashService hashService, JwtAuthOptions jwtAuthOptions)
         {
-            _userService = userService;
+            _userRepository = userRepository;
             _hashService = hashService;
             _jwtAuthOptions = jwtAuthOptions;
         }
@@ -47,7 +47,7 @@ namespace BackendServiceStarter.Services.Auth
 
         public async Task<ClaimsIdentity> GetIdentity(string email, string password)
         {
-            var user = await _userService.FindByEmail(email);
+            var user = await _userRepository.FindByEmail(email);
             
             if (user == null)
             {
