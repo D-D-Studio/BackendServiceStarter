@@ -7,7 +7,7 @@
   
         <IsPackable>true</IsPackable>
         <PackageId>D-D-Studio.BackendServiceStarter</PackageId>
-        <PackageVersion>0.0.1</PackageVersion>
+        <PackageVersion>0.0.2</PackageVersion>
         <Title>BackendServiceStarter</Title>
         <Authors>D&amp;D Studio</Authors>
         <RepositoryUrl>https://github.com/D-D-Studio/BackendServiceStarter</RepositoryUrl>
