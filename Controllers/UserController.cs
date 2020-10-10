@@ -49,8 +49,7 @@ namespace BackendServiceStarter.Controllers
             {
                 return BadRequest();
             }
-
-            // TODO: Make policy
+            
             if ((!HttpContext.User.Identity.IsAuthenticated || !HttpContext.User.IsInRole("Administrator")) &&
                 request.Role != UserRole.Default)
             {
@@ -79,7 +78,6 @@ namespace BackendServiceStarter.Controllers
                 return NotFound();
             }
             
-            // TODO: Make policy
             if (HttpContext.User.Identity.Name != user.Id.ToString() && !HttpContext.User.IsInRole("Administrator"))
             {
                 return Forbid();
@@ -118,7 +116,6 @@ namespace BackendServiceStarter.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Destroy(int id)
         {
-            // TODO: Make policy
             if (HttpContext.User.Identity.Name != id.ToString() && !HttpContext.User.IsInRole("Administrator"))
             {
                 return Forbid();
