@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  backendservicestarter:
+    image: ${DOCKER_REGISTRY-}backendservicestarter
+    build:
+      context: .
+      dockerfile: ./Dockerfile

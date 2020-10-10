@@ -49,7 +49,6 @@ namespace BackendServiceStarter.Controllers
             {
                 return BadRequest();
             }
-
             var isNotAdministrator = !HttpContext.User.Identity.IsAuthenticated ||
                                      !HttpContext.User.IsInRole("Administrator");
 
@@ -79,7 +78,7 @@ namespace BackendServiceStarter.Controllers
             {
                 return NotFound();
             }
-
+            
             var isNotCurrentUser = HttpContext.User.Identity.Name != user.Id.ToString();
             var isNotAdministrator = !HttpContext.User.IsInRole("Administrator");
 
